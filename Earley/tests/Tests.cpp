@@ -230,7 +230,8 @@ TEST(EarleyAlgoTests, Complete_test) {
     D[1].insert(Earley::Configuration({0, 'S', "(S)", 1}));
     D[1].insert(Earley::Configuration({0, 'S', "a", 1}));
     D[2].insert( Earley::Configuration({1, 'S', "a", 1}));
-    earley.Complete(D, 2);
+    vector<unordered_map<Earley::Configuration, bool, Earley::conf_hash, Earley::conf_eq>> flags_for_complete(word.length() + 1);
+    earley.Complete(D, 2, flags_for_complete);
     ASSERT_EQ(4, D[2].size());
     bool flag;
     for (auto& conf : D[2]) {

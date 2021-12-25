@@ -34,9 +34,8 @@ bool Earley::Predict(vector<set_conf>& D, int j) {
                     new_conf.lhs = rule.lhs;
                     new_conf.rhs = rule.rhs;
                     new_conf.pos = 0;
-                    new_conf.index = j;
-                    auto res = D[j].insert(new_conf);
-                    flag |= res.second;
+                    new_conf.index_of_read_prefix = j;
+                    flag |= D[j].insert(new_conf).second;
                 }
             }
         }
@@ -44,16 +43,16 @@ bool Earley::Predict(vector<set_conf>& D, int j) {
     return flag;
 }
 
-bool Earley::Complete(vector<set_conf>& D, int j) {
+bool Earley::Complete(vector<set_conf>& D, int j, vector<unordered_map<Configuration, bool, conf_hash, conf_eq>>& flags_for_complete) {
     bool flag = false;
-    for (auto& conf1 : D[j]) {
-        if (conf1.pos == conf1.rhs.size()) {
-            for (auto& conf2 : D[conf1.index]) {
+    for (auto & conf1 : D[j]) {
+        if (conf1.pos == conf1.rhs.size() && !flags_for_complete[j][conf1]) {
+            flags_for_complete[j][conf1] = true;
+            for (auto& conf2 : D[conf1.index_of_read_prefix]) {
                 if (current_grammar.is_neterminal(conf2.current_symbol()) && conf2.current_symbol() == conf1.lhs) {
                     Configuration new_conf = conf2;
                     new_conf.pos++;
-                    auto res = D[j].insert(new_conf);
-                    flag |= res.second;
+                    flag |= D[j].insert(new_conf).second;
                 }
             }
         }
@@ -69,13 +68,14 @@ bool Earley::predict(const string& word) {
     size_t word_len = word.length();
     handling_word = word;
     vector<set_conf> D(word_len + 1);
+    vector<unordered_map<Configuration, bool, conf_hash, conf_eq>> flags_for_complete(word_len + 1);
     D[0].insert({0, PRESTARTING_NETERMINAL, STARTING_NETERMINAL, 0});
     for (int j = 0; j < word_len + 1; ++j) {
         Scan(D, j);
         bool flag = true;
         while (flag) {
             flag = false;
-            flag |= Complete(D, j);
+            flag |= Complete(D, j, flags_for_complete);
             flag |= Predict(D, j);
         }
     }

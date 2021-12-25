@@ -5,7 +5,7 @@ TEST(SimpleTest, test1) {
     Grammar G;
     G.set_term_alphabet() = "ab";
     G.set_neterm_alphabet() = "S";
-    stringstream in;
+    std::stringstream in;
     in << "2 S->SaSb S->";
     in >> G;
 
@@ -22,7 +22,7 @@ TEST(SimpleTest, test2) {
     Grammar G;
     G.set_term_alphabet() = "cd";
     G.set_neterm_alphabet() = "SC";
-    stringstream in;
+    std::stringstream in;
     in << "3 S->CC C->cC C->d";
     in >> G;
 
@@ -38,7 +38,7 @@ TEST(SimpleTest, test3) {
     Grammar G;
     G.set_term_alphabet() = "abc";
     G.set_neterm_alphabet() = "SB";
-    stringstream in;
+    std::stringstream in;
     in << "3 S->aB B->bc B->b";
     in >> G;
 
