@@ -1,5 +1,7 @@
 # formal2021-practice
 
+The implementation of two parsing algorithms using C++.
+
 ### Earley algorithm
 
 Standart CF-grammar parsing algorithm. All the functions are covered with tests. 
